@@ -9,5 +9,5 @@ public class EatgoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(EatgoApplication.class, args);
 	}
-	//헬로월드
+	//헬로월드!!
 }
