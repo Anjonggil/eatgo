@@ -56,7 +56,7 @@ public class RestaurantControllerTest {
                 ));
     }
     @Test
-    public void detail() throws Exception {
+    public void detailWithExisted() throws Exception {
 
         Restaurant restaurant1 = Restaurant.builder()
                 .id(1004L)
@@ -67,13 +67,14 @@ public class RestaurantControllerTest {
                                                         .name("Kimchi")
                                                         .build()));
 
-        Restaurant restaurant2 = Restaurant.builder()
-                .id(2020L)
-                .name("Cyber Food")
-                .address("Seoul")
-                .build();
 
-        given(restaurantService.getRestaurant(2020L)).willReturn(restaurant2);
+        Review review = Review.builder()
+                .name("JOKER")
+                .score(5)
+                .description("Great!")
+                .build();
+        restaurant1.setReviews(Arrays.asList(review));
+
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant1);
 
         mvc.perform(get("/restaurants/1004"))
@@ -86,20 +87,29 @@ public class RestaurantControllerTest {
                 ))
                 .andExpect(content().string(
                         containsString("Kimchi")
-                ));
-        mvc.perform(get("/restaurants/2020"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(
-                        containsString("\"id\":2020")
                 ))
-                .andExpect(content().string(
-                        containsString("\"name\":\"Cyber Food\"")
-                ));
+                .andExpect(content().string(containsString("Great!")));
 
+
+    }
+    @Test
+    public void detailWithNotExisted() throws Exception {
+        given(restaurantService.getRestaurant(404L)).willThrow(new RestaurantNotFoundException(404L));
+        mvc.perform(get("/restaurants/404"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("{}"));
     }
 
     @Test
-    public void create() throws Exception {
+    public void createWithValidData() throws Exception {
+        given(restaurantService.addRestaurant(any())).will(invocation -> {
+            Restaurant restaurant = invocation.getArgument(0);
+            return Restaurant.builder()
+                    .id(1234L)
+                    .name(restaurant.getName())
+                    .address(restaurant.getAddress())
+                    .build();
+        });
 
         mvc.perform(post("/restaurants")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +121,19 @@ public class RestaurantControllerTest {
         verify(restaurantService).addRestaurant(any());
     }
     @Test
-    public void update() throws Exception {
+    public void createWithInvalidData() throws Exception {
+
+
+        mvc.perform(post("/restaurants")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
+
+;
+    }
+    @Test
+    public void updateWithValid() throws Exception {
 
         mvc.perform(patch("/restaurants/1004")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -119,6 +141,28 @@ public class RestaurantControllerTest {
                 .andExpect(status().isOk());
 
         verify(restaurantService).updateRestaurant(1004L,"JOKER Bar","Busan");
+    }
+
+    @Test
+    public void updateWithInvalid() throws Exception {
+
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
+
+    }
+
+    @Test
+    public void updateWithoutName() throws Exception {
+
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"Busan\"}"))
+                .andExpect(status().isBadRequest());
+
+
     }
 
 
