@@ -1,7 +1,8 @@
 package kr.co.fastcampus.eatgo.interfaces;
 
-import com.sun.media.sound.DLSInstrument;
+import kr.co.fastcampus.eatgo.application.CategoryService;
 import kr.co.fastcampus.eatgo.application.RegionService;
+import kr.co.fastcampus.eatgo.domain.Category;
 import kr.co.fastcampus.eatgo.domain.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,27 +13,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 @RestController
-public class RegionController {
+public class CategoryController {
 
     @Autowired
-    private RegionService regionService;
+    private CategoryService categoryService;
 
 
 
-    @GetMapping("/regions")
-    public List<Region> list(){
-        List<Region> regions = regionService.getRegions();
-        return regions;
+    @GetMapping("/categories")
+    public List<Category> list(){
+        List<Category> categories = categoryService.getCategories();
+        return categories;
     }
-    @PostMapping("/regions")
-    public ResponseEntity<?> create(@RequestBody Region resource) throws URISyntaxException {
+    @PostMapping("/categories")
+    public ResponseEntity<?> create(@RequestBody Category resource) throws URISyntaxException {
         String name = resource.getName();
-        Region region = regionService.addRegion(name);
+        Category category = categoryService.addCategory(name);
 
-        String url = "regions/"+region.getId();
+        String url = "categories/"+category.getId();
         return ResponseEntity.created(new URI(url)).body("{}");
     }
 }
