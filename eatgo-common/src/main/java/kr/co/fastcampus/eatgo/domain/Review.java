@@ -22,7 +22,7 @@ public class Review {
     @Id
     @GeneratedValue
     private Long id;
-    @NotEmpty
+
     private String name;
     @NotNull
     private Integer score;
