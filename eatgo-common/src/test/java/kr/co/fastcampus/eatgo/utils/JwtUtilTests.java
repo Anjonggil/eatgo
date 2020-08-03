@@ -5,8 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
 class JwtUtilTests {
 
     private static String SECRET = "12345678901234567890123456789012";
@@ -24,6 +24,7 @@ class JwtUtilTests {
 
         String token = jwtUtil.createToken(1004l,"john",null);
 
+        assertThat(token, containsString("."));
         assertThat(token, containsString("."));
     }
     @Test

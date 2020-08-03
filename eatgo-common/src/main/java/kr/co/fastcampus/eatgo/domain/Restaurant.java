@@ -1,8 +1,6 @@
 package kr.co.fastcampus.eatgo.domain;
 
 
-
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -12,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
